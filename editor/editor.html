@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trailmark Editor</title>
+  <link rel="stylesheet" href="editor.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="brand">
+        <img src="../icons/icon48.png" alt="" width="22" height="22">
+        <span>Trailmark Editor</span>
+      </div>
+      <input class="title-input" id="titleInput" type="text" placeholder="Untitled walkthrough" />
+      <div class="topbar-actions">
+        <button class="btn-ghost" id="backBtn" title="Close this tab">Close</button>
+        <button class="btn-secondary" id="exportMdBtn" title="Export as Markdown + separate PNGs">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Markdown
+        </button>
+        <button class="btn-secondary" id="exportDocBtn" title="Export as Microsoft Word">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Word
+        </button>
+        <button class="btn-primary" id="exportPdfBtn" title="Export as PDF">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          PDF
+        </button>
+      </div>
+    </header>
+
+    <!-- Main panes -->
+    <main class="main">
+      <!-- Left rail: step list -->
+      <aside class="rail" id="rail">
+        <div class="rail-header">
+          <span id="stepCount">0 steps</span>
+          <span class="rail-hint">Drag to reorder</span>
+          <button class="add-step-btn" id="addStepBtn" title="Add a step with your own screenshot">+ Add</button>
+        </div>
+        <input type="file" id="uploadInput" accept="image/png,image/jpeg,image/webp,image/gif,image/heic,image/heif" multiple style="display:none">
+        <div class="step-list" id="stepList"></div>
+        <div class="rail-empty" id="railEmpty">
+          <p>No steps yet.</p>
+          <p class="muted">Record a walkthrough from the extension popup, then come back here to annotate and export.</p>
+        </div>
+      </aside>
+
+      <!-- Right pane: editor -->
+      <section class="stage" id="stage">
+        <div class="stage-empty" id="stageEmpty">
+          <div class="drop-zone" id="dropZone">
+            <svg class="drop-icon" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <h2 class="drop-title">Drop screenshots here</h2>
+            <p class="drop-sub">or <button type="button" class="drop-browse" id="browseBtn">browse files</button></p>
+            <p class="drop-hint">Supported: PNG · JPG · WebP · GIF · HEIC — up to 10 MB each</p>
+            <p class="drop-error" id="dropError" role="alert"></p>
+          </div>
+        </div>
+
+        <div class="stage-editor" id="stageEditor" style="display:none">
+          <!-- Toolbar: two rows — tools and colors -->
+          <div class="toolbar">
+            <div class="tool-row">
+              <button class="tool-btn active" data-tool="select" title="Select / Move / Resize">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3 2l7 18 2.5-7.5L20 10z"/></svg>
+                <span class="tool-label">Select</span>
+              </button>
+              <button class="tool-btn" data-tool="rect" title="Draw a rectangle">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="5" width="18" height="14" rx="1"/></svg>
+                <span class="tool-label">Rectangle</span>
+              </button>
+              <button class="tool-btn" data-tool="arrow" title="Draw an arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="20" x2="20" y2="4"/><polyline points="10 4 20 4 20 14"/></svg>
+                <span class="tool-label">Arrow</span>
+              </button>
+              <button class="tool-btn" data-tool="highlight" title="Highlight a region">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" opacity="0.85"><rect x="3" y="9" width="18" height="6" rx="1"/></svg>
+                <span class="tool-label">Highlight</span>
+              </button>
+              <button class="tool-btn" data-tool="text" title="Add a text label">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="12" y1="6" x2="12" y2="20"/></svg>
+                <span class="tool-label">Text</span>
+              </button>
+              <button class="tool-btn" data-tool="blur" title="Blur sensitive info">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="1.2" fill="currentColor"/><circle cx="14" cy="8" r="1.2" fill="currentColor" opacity="0.6"/><circle cx="20" cy="8" r="1.2" fill="currentColor" opacity="0.3"/><circle cx="5" cy="14" r="1.2" fill="currentColor" opacity="0.6"/><circle cx="11" cy="14" r="1.2" fill="currentColor"/><circle cx="17" cy="14" r="1.2" fill="currentColor" opacity="0.6"/><circle cx="8" cy="20" r="1.2" fill="currentColor" opacity="0.3"/><circle cx="14" cy="20" r="1.2" fill="currentColor" opacity="0.6"/><circle cx="20" cy="20" r="1.2" fill="currentColor"/></svg>
+                <span class="tool-label">Blur</span>
+              </button>
+
+              <div class="tool-divider"></div>
+
+              <button class="tool-btn ghost" id="deleteAnnBtn" title="Delete selected annotation (Del)">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+                <span class="tool-label">Delete</span>
+              </button>
+              <button class="tool-btn ghost" id="undoBtn" title="Undo last action">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                <span class="tool-label">Undo</span>
+              </button>
+              <button class="tool-btn ghost" id="clearBtn" title="Clear all annotations on this step">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 13L13 7"/><path d="M5 19L11 13"/><path d="M19 19L13 13"/><path d="M5 13L11 7"/></svg>
+                <span class="tool-label">Clear</span>
+              </button>
+            </div>
+            <div class="color-row" id="colorRow">
+              <span class="color-row-label">Color</span>
+              <!-- Swatches injected by JS so the palette is defined in one place -->
+            </div>
+          </div>
+
+          <div class="canvas-wrap">
+            <canvas id="canvas" tabindex="0"></canvas>
+          </div>
+
+          <div class="desc-row">
+            <div class="desc-row-header">
+              <label for="descInput">Step description</label>
+              <button type="button" class="desc-check-btn" id="descCheckBtn" disabled
+                      title="Use AI to proofread this step's description">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M15 4V2"/>
+                  <path d="M15 10V8"/>
+                  <path d="M12.5 6.5h2"/>
+                  <path d="M17.5 6.5h2"/>
+                  <path d="M9 13l-6 6a1.5 1.5 0 0 0 2 2l6-6"/>
+                  <path d="M14.5 3.5L20 9l-6 6-5-5z"/>
+                </svg>
+                <span>AI Proofread</span>
+              </button>
+            </div>
+            <textarea id="descInput" rows="2" placeholder="Describe what the user should do"></textarea>
+            <div class="desc-status" id="descStatus" role="status" aria-live="polite"></div>
+          </div>
+          <div class="meta-row" id="metaRow"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Add-screenshot modal (used when steps already exist). -->
+  <div class="add-modal" id="addModal" style="display:none" role="dialog" aria-modal="true" aria-labelledby="addModalTitle">
+    <div class="add-modal-backdrop" id="addModalBackdrop"></div>
+    <div class="add-modal-card">
+      <button class="add-modal-close" id="addModalClose" aria-label="Close">×</button>
+      <div class="drop-zone" id="modalDropZone">
+        <svg class="drop-icon" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <h2 class="drop-title" id="addModalTitle">Add screenshots</h2>
+        <p class="drop-sub">Drop files here or <button type="button" class="drop-browse" id="modalBrowseBtn">browse files</button></p>
+        <p class="drop-hint">Supported: PNG · JPG · WebP · GIF · HEIC — up to 10 MB each</p>
+        <p class="drop-error" id="modalDropError" role="alert"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../lib/jspdf.umd.min.js"></script>
+  <script src="editor.js"></script>
+</body>
+</html>

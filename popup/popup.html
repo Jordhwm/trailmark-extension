@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trailmark</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <img src="../icons/icon48.png" alt="" width="22" height="22" class="logo-img">
+        <span>Trailmark</span>
+      </div>
+      <button class="settings-btn" id="openOptions" title="Settings">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </header>
+
+    <!-- No LLM Config Hint -->
+    <div class="info-hint" id="noApiKeyWarning" style="display:none">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>Add an <button class="link-btn" id="openOptionsLink">AI provider</button> for richer step descriptions</span>
+    </div>
+
+    <!-- Recording Controls -->
+    <div class="controls">
+      <div class="controls-left">
+        <button class="record-btn" id="recordBtn" disabled>
+          <span class="btn-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>
+          </span>
+          <span class="btn-label">Start Recording</span>
+        </button>
+        <button class="capture-btn" id="captureBtn" style="display:none" title="Manually capture the current page">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
+          </svg>
+          Capture
+        </button>
+      </div>
+      <div class="controls-right">
+        <div class="step-count" id="stepCount">0 steps</div>
+        <button class="end-session-btn" id="endSessionBtn" style="display:none">End Session</button>
+      </div>
+    </div>
+
+    <!-- Steps List -->
+    <div class="steps-container" id="stepsContainer">
+      <div class="empty-state" id="emptyState">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.4">
+          <path d="M15 10l-4 4l6 6l4-16l-18 7l4 2l2 6l3-4"/>
+        </svg>
+        <p>Click "Start Recording" then interact<br>with any page to capture steps</p>
+      </div>
+      <div class="steps-list" id="stepsList"></div>
+    </div>
+
+    <!-- Footer Actions (shown when steps exist and not in post-session) -->
+    <footer class="footer" id="footer" style="display:none">
+      <button class="btn-primary" id="exportBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Edit &amp; Export
+      </button>
+    </footer>
+
+    <!-- Post-Session View (shown after End Session) -->
+    <div class="post-session" id="postSession" style="display:none">
+      <p class="post-session-msg">Session ended. What would you like to do?</p>
+      <button class="btn-primary" id="postExportBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Edit &amp; Export
+      </button>
+      <button class="btn-danger" id="postNewSessionBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+        New Session
+      </button>
+      <button class="btn-ghost" id="postBackBtn">Back</button>
+    </div>
+
+    <!-- Warning Modal -->
+    <div class="warning-modal" id="warningModal" style="display:none">
+      <div class="warning-modal-content">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        <h3>Start a new session?</h3>
+        <p>This will permanently delete all recorded steps and any edits made in the editor. This cannot be undone.</p>
+        <div class="warning-modal-actions">
+          <button class="btn-ghost" id="warningCancelBtn">Cancel</button>
+          <button class="btn-danger" id="warningConfirmBtn">Clear &amp; Start New</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

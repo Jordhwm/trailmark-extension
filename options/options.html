@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Trailmark — Settings</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #21253a;
+      --border: #2a2d3a;
+      --text: #e8eaf0;
+      --text-muted: #6b7280;
+      --accent: #6366f1;
+      --accent-hover: #4f52d4;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 40px 24px;
+    }
+
+    .page { max-width: 600px; margin: 0 auto; }
+
+    /* Header */
+    .page-header { margin-bottom: 32px; }
+    .page-header h1 { font-size: 22px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+    .page-header p { color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+
+    /* Section */
+    .section { margin-bottom: 28px; }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    /* Provider Cards */
+    .providers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .provider-card {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+      position: relative;
+    }
+
+    .provider-card:hover {
+      border-color: var(--accent);
+      background: var(--surface2);
+    }
+
+    .provider-card.selected {
+      border-color: var(--accent);
+      background: rgba(99,102,241,0.08);
+    }
+
+    .provider-card.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 6px;
+      right: 8px;
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .provider-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .provider-tag {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* Form fields */
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+      color: #a0a6b2;
+      margin-bottom: 8px;
+    }
+
+    .field label a {
+      font-size: 11px;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .field label a:hover { text-decoration: underline; }
+
+    .field input {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 14px;
+      transition: border-color 0.15s;
+      appearance: none;
+    }
+
+    .field input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .field input::placeholder { color: var(--text-muted); }
+
+    .field input[list] { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 36px; }
+    /* Hide Chrome's built-in datalist dropdown indicator so only our custom chevron shows. */
+    .field input[list]::-webkit-calendar-picker-indicator {
+      display: none !important;
+      opacity: 0;
+    }
+
+    .key-input-wrap { position: relative; }
+    .key-input-wrap input { padding-right: 44px; font-family: monospace; font-size: 13px; }
+    .toggle-key-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 4px;
+      transition: color 0.15s;
+    }
+    .toggle-key-btn:hover { color: var(--text); }
+
+    /* Custom URL field — hidden unless custom provider selected */
+    #customUrlField { display: none; }
+
+    .refresh-btn {
+      background: var(--surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .refresh-btn:hover:not(:disabled) { color: var(--text); border-color: var(--accent); }
+    .refresh-btn:disabled { opacity: 0.5; cursor: wait; }
+
+    .field-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      min-height: 14px;
+    }
+    .field-hint.error { color: var(--danger); }
+    .field-hint.success { color: var(--success); }
+    .field-hint.warning { color: var(--warning); }
+
+    /* Actions */
+    .actions { display: flex; align-items: center; gap: 12px; margin-top: 24px; }
+
+    .btn-primary {
+      padding: 10px 24px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.15s;
+    }
+    .btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-secondary {
+      padding: 10px 20px;
+      background: var(--surface);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .btn-secondary:hover { color: var(--text); border-color: var(--text-muted); }
+
+    .btn-ghost-danger {
+      margin-left: auto;
+      padding: 10px 16px;
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .btn-ghost-danger:hover:not(:disabled) {
+      color: var(--danger);
+      border-color: var(--danger);
+    }
+    .btn-ghost-danger:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    /* Status messages */
+    .status {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-top: 12px;
+    }
+    .status.success { display: flex; background: rgba(16,185,129,0.1); color: var(--success); border: 1px solid rgba(16,185,129,0.2); }
+    .status.error { display: flex; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
+    .status.testing { display: flex; background: rgba(99,102,241,0.1); color: var(--accent); border: 1px solid rgba(99,102,241,0.2); }
+
+    /* Current config pill */
+    .current-config {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      background: rgba(16,185,129,0.08);
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--success);
+      margin-bottom: 20px;
+    }
+
+    .spinner {
+      width: 12px; height: 12px;
+      border: 2px solid rgba(99,102,241,0.3);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    hr { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+    /* Sensitivity slider */
+    .slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .slider-wrap input[type="range"] {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      outline: none;
+    }
+    .slider-wrap input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: none;
+    }
+    .slider-value {
+      min-width: 50px;
+      text-align: right;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+    .slider-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="page-header">
+      <h1>
+        <img src="../icons/icon48.png" alt="" width="24" height="24">
+        Trailmark Settings
+      </h1>
+      <p>Trailmark works without AI — step descriptions are generated automatically from element context. Add an AI provider below for richer, more detailed descriptions. Your key is stored locally and only sent directly to the provider's API.</p>
+    </div>
+
+    <!-- Current config banner -->
+    <div class="current-config" id="currentConfig">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+      <span id="currentConfigText"></span>
+    </div>
+
+    <!-- Provider Selection -->
+    <div class="section">
+      <div class="section-label">1. Choose AI Provider</div>
+      <div class="providers-grid" id="providersGrid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Model Selection -->
+    <div class="section" id="modelSection">
+      <div class="section-label">2. Select Model</div>
+      <div class="field">
+        <label for="modelSelect">
+          Model <span style="font-weight:400; color:var(--text-muted)">(type any model or pick a suggestion)</span>
+          <button type="button" id="refreshModelsBtn" class="refresh-btn" title="Fetch the list of models your API key has access to">Refresh models</button>
+        </label>
+        <input type="text" id="modelSelect" list="modelSuggestions" placeholder="Type or select a model" autocomplete="off" />
+        <datalist id="modelSuggestions"></datalist>
+        <p class="field-hint" id="modelsHint"></p>
+      </div>
+      <!-- Custom model input — shown for custom provider -->
+      <div class="field" id="customModelField" style="display:none">
+        <label for="customModelInput">Model name</label>
+        <input type="text" id="customModelInput" placeholder="e.g. llava:latest or gpt-4o"/>
+      </div>
+    </div>
+
+    <!-- Custom URL (only for custom provider) -->
+    <div class="section" id="customUrlField">
+      <div class="section-label">Base URL</div>
+      <div class="field">
+        <label for="customUrlInput">API endpoint (OpenAI-compatible)</label>
+        <input type="text" id="customUrlInput" placeholder="https://your-host.example.com/v1/chat/completions"/>
+        <p class="field-hint" id="customUrlHint">Your API key will be sent to this URL — only use endpoints you trust. https:// required; localhost and private IPs are blocked.</p>
+      </div>
+    </div>
+
+    <!-- API Key -->
+    <div class="section">
+      <div class="section-label">3. Add API Key</div>
+      <div class="field">
+        <label for="apiKeyInput">
+          API Key
+          <a id="docsLink" href="#" target="_blank">Get API key ↗</a>
+        </label>
+        <div class="key-input-wrap">
+          <input type="password" id="apiKeyInput" placeholder="Paste your API key here" autocomplete="off"/>
+          <button class="toggle-key-btn" id="toggleKeyBtn" title="Show/hide key">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="eyeIcon">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Capture Sensitivity -->
+    <div class="section">
+      <div class="section-label">Capture Sensitivity</div>
+      <div class="field">
+        <label>Minimum delay between captures</label>
+        <div class="slider-wrap">
+          <input type="range" id="sensitivitySlider" min="0" max="2000" step="50" value="300" />
+          <span class="slider-value" id="sensitivityValue">300ms</span>
+        </div>
+        <p class="slider-hint">Lower = more captures. Higher = fewer captures. Set to 0 to capture every click.</p>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="btn-primary" id="saveBtn">Save Configuration</button>
+      <button class="btn-secondary" id="testBtn">Test Connection</button>
+      <button class="btn-ghost-danger" id="removeKeyBtn" title="Delete the saved API key for the selected provider" disabled>Remove API Key</button>
+    </div>
+
+    <div class="status" id="statusMsg"></div>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
