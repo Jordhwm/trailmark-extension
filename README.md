@@ -22,10 +22,7 @@ Trailmark is a Chrome extension that records how you navigate a website and turn
 
 ## Screenshots
 
-<!-- Replace these placeholders with real screenshots when ready. -->
-| Popup | Editor | Settings |
-|-------|--------|----------|
-| ![popup](docs/screenshots/popup.png) | ![editor](docs/screenshots/editor.png) | ![settings](docs/screenshots/settings.png) |
+![Trailmark — record, annotate, export any web workflow](docs/screenshots/hero.png)
 
 ## Install
 
