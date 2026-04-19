@@ -28,28 +28,32 @@ Trailmark is a Chrome extension that records how you navigate a website and turn
 
 ### From the Chrome Web Store
 
-> ⏳ **Pending review** — Trailmark is awaiting Chrome Web Store approval. Until the listing goes live, install directly from this repo using the steps below.
+> ⏳ **Pending review** — Trailmark is awaiting Chrome Web Store approval. Until the listing goes live, you can install it yourself in under a minute using either option below.
 
 <!-- Flip this in once the Store listing is approved. -->
 <!-- [Install Trailmark on the Chrome Web Store](https://chrome.google.com/webstore/detail/YOUR_ID) -->
 
-### From source (unpacked)
+### From the latest release (easiest)
 
-Clone the repo (or download the ZIP from the green **Code** button → **Download ZIP** and unzip it):
+1. Go to the [Releases page](https://github.com/Jordhwm/trailmark-extension/releases) and download the `trailmark-vX.Y.Z.zip` from the latest release's **Assets**.
+2. Unzip it somewhere you won't delete (e.g. `~/Applications/trailmark` on macOS, `C:\Tools\trailmark` on Windows).
+3. Open `chrome://extensions`.
+4. Toggle **Developer mode** on (top right).
+5. Click **Load unpacked** and select the unzipped folder.
+6. Pin the Trailmark icon to your toolbar.
+
+### From source (for development)
 
 ```bash
 git clone https://github.com/Jordhwm/trailmark-extension.git
 cd trailmark-extension
 ```
 
-Then in Chrome:
+Then `chrome://extensions` → **Developer mode** → **Load unpacked** → select the `trailmark-extension` folder.
 
-1. Open `chrome://extensions`.
-2. Toggle **Developer mode** on (top right).
-3. Click **Load unpacked** and select the `trailmark-extension` folder.
-4. Pin the Trailmark icon to your toolbar.
+---
 
-The extension works fully offline — no sign-up, no cloud upload. If you want AI-generated step descriptions, add your own Claude, OpenAI, or Gemini API key under **Settings** inside the extension.
+Trailmark works fully offline — no sign-up, no cloud upload. If you want AI-generated step descriptions, add your own Claude, OpenAI, or Gemini API key under **Settings** inside the extension.
 
 ## Usage
 
