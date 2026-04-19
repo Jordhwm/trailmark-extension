@@ -18,7 +18,7 @@
 
 ## What it does
 
-Trailmark is a Chrome extension that records how you navigate a website and turns it into a polished step-by-step walkthrough. Each time you click during a recording session it captures a screenshot, reads the element you clicked, and writes a short instruction sentence — either from a template or, if you've configured Claude / OpenAI / Gemini with your own API key, from an AI-generated description. You can then annotate the screenshots in a built-in editor and export the result as a PDF, Markdown bundle, or Word document.
+Trailmark is a Chrome extension that records how you navigate a website and turns it into a polished step-by-step walkthrough. Each time you click during a recording session it captures a screenshot, reads the element you clicked, and writes a short instruction sentence either from a template or, if you've configured Claude / OpenAI / Gemini with your own API key, from an AI-generated description. You can then annotate the screenshots in a built-in editor and export the result as a PDF, Markdown bundle, or Word document.
 
 ## Screenshots
 
@@ -53,7 +53,7 @@ Then `chrome://extensions` → **Developer mode** → **Load unpacked** → sele
 
 ---
 
-Trailmark works fully offline — no sign-up, no cloud upload. If you want AI-generated step descriptions, add your own Claude, OpenAI, or Gemini API key under **Settings** inside the extension.
+Trailmark works fully offline no sign-up, no cloud upload. If you want AI-generated step descriptions, add your own Claude, OpenAI, or Gemini API key under **Settings** inside the extension.
 
 ## Usage
 
@@ -81,7 +81,7 @@ trailmark-extension/
 
 ### Making changes
 
-There's no build step — Trailmark is plain HTML, CSS, and JavaScript loaded directly by Chrome. After editing any file:
+There's no build step Trailmark is plain HTML, CSS, and JavaScript loaded directly by Chrome. After editing any file:
 
 1. Open `chrome://extensions`.
 2. Click the reload icon on the Trailmark card.
@@ -112,7 +112,7 @@ Before opening a PR, please:
 
 - Test your change unpacked in Chrome and confirm no regressions on a recorded walkthrough.
 - Keep commits focused and the diff small where possible.
-- Avoid adding dependencies unless there's a strong reason — the extension is intentionally build-free.
+- Avoid adding dependencies unless there's a strong reason the extension is intentionally build-free.
 
 ## License
 
