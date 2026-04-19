@@ -28,10 +28,14 @@ Trailmark is a Chrome extension that records how you navigate a website and turn
 
 ### From the Chrome Web Store
 
-<!-- Replace with the real Web Store URL after publishing. -->
-[Install Trailmark on the Chrome Web Store](https://chrome.google.com/webstore/detail/PLACEHOLDER)
+> ⏳ **Pending review** — Trailmark is awaiting Chrome Web Store approval. Until the listing goes live, install directly from this repo using the steps below.
+
+<!-- Flip this in once the Store listing is approved. -->
+<!-- [Install Trailmark on the Chrome Web Store](https://chrome.google.com/webstore/detail/YOUR_ID) -->
 
 ### From source (unpacked)
+
+Clone the repo (or download the ZIP from the green **Code** button → **Download ZIP** and unzip it):
 
 ```bash
 git clone https://github.com/Jordhwm/trailmark-extension.git
@@ -44,6 +48,8 @@ Then in Chrome:
 2. Toggle **Developer mode** on (top right).
 3. Click **Load unpacked** and select the `trailmark-extension` folder.
 4. Pin the Trailmark icon to your toolbar.
+
+The extension works fully offline — no sign-up, no cloud upload. If you want AI-generated step descriptions, add your own Claude, OpenAI, or Gemini API key under **Settings** inside the extension.
 
 ## Usage
 
