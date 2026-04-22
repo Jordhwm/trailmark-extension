@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Trailmark — Auto Step Recorder",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Record any web workflow and export it as a step-by-step PDF guide",
   "permissions": [
     "activeTab",
